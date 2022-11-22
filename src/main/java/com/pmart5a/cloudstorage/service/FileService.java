@@ -1,12 +1,13 @@
 package com.pmart5a.cloudstorage.service;
 
-import com.pmart5a.cloudstorage.entity.FileEntity;
-import com.pmart5a.cloudstorage.entity.UserEntity;
-import com.pmart5a.cloudstorage.exception.FileOperationsException;
-import com.pmart5a.cloudstorage.exception.InputDataException;
-import com.pmart5a.cloudstorage.model.FileResponse;
+import com.pmart5a.cloudstorage.exception.FileNameNotUniqueException;
+import com.pmart5a.cloudstorage.exception.FileNotFoundException;
+import com.pmart5a.cloudstorage.exception.NewFileNameNotUniqueException;
+import com.pmart5a.cloudstorage.exception.NewFileNameUnknownException;
+import com.pmart5a.cloudstorage.model.dto.FileResponse;
+import com.pmart5a.cloudstorage.model.entity.FileEntity;
+import com.pmart5a.cloudstorage.model.entity.UserEntity;
 import com.pmart5a.cloudstorage.repository.FileRepository;
-import com.pmart5a.cloudstorage.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,59 +25,68 @@ import java.util.stream.Collectors;
 public class FileService {
 
     private final FileRepository fileRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Transactional
-    public void uploadFile(String authToken, String fileName, MultipartFile file) {
-        UserEntity userEntity = userRepository.findById(1L).get();
-        if (isFile(1L, fileName)) {
-            throw new InputDataException(String.format("Ошибка ввода данных. Файл с именем %s есть в облаке." +
-                    " Для повторения операции измените имя у сохранённого или загружаемого файла.", fileName));
-        } else {
-            try {
-                fileRepository.save(FileEntity.builder()
-                        .fileName(fileName)
-                        .fileSize(file.getSize())
-                        .fileType(file.getContentType())
-                        .fileDateUpdate(LocalDateTime.now())
-                        .fileByte(file.getBytes())
-                        .user(userEntity)
-                        .build());
-            } catch (IOException e) {
-                throw new FileOperationsException("Операция загрузки файла завершилась ошибкой.");
-            }
+    public void uploadFile(String fileName, MultipartFile file) throws IOException, FileNameNotUniqueException {
+        final var userId = getUserAuth().getId();
+        if (isFile(userId, fileName)) {
+            throw new FileNameNotUniqueException(String.format("FileService. Upload file. A file with that name already" +
+                    " exists. UserId: [%d], fileName: [%s].", userId, fileName));
         }
+        fileRepository.save(createFileEntity(fileName, file));
+        log.info("The user with id [{}] uploaded the file [{}].", userId, fileName);
     }
 
     @Transactional
-    public void deleteFile(String authToken, String fileName) {
-        if (isFile(1L, fileName)) {
-            fileRepository.deleteFileByUserIdAndFileName(1L, fileName);
-        } else {
-            throw new InputDataException(String.format("Ошибка ввода данных. Файл с именем %s не найден.", fileName));
+    public void deleteFile(String fileName) throws FileNotFoundException {
+        final var userId = getUserAuth().getId();
+        if (!isFile(userId, fileName)) {
+            throw new FileNotFoundException(String.format("FileService. Delete file. File not found. UserId: [%d]," +
+                    " fileName: [%s].", userId, fileName));
         }
+            fileRepository.deleteFileByUserIdAndFileName(userId, fileName);
+            log.info("The user with id [{}] deleted the file [{}].", userId, fileName);
     }
 
-    public FileEntity downloadFile(String authToken, String fileName) {
-        final var fileEntity = fileRepository.findByUserIdAndFileName(1L, fileName);
+    public FileEntity downloadFile(String fileName) throws FileNotFoundException {
+        final var userId = getUserAuth().getId();
+        final var fileEntity = fileRepository.findByUserIdAndFileName(userId, fileName);
         if (fileEntity.isEmpty()) {
-            throw new InputDataException(String.format("Ошибка ввода данных. Файл с именем %s не найден.", fileName));
+            throw new FileNotFoundException(String.format("FileService. Download file. File not found. UserId: [%d]," +
+                    " fileName: [%s].", userId, fileName));
         }
+        log.info("The user with id [{}] downloaded the file [{}].", userId, fileName);
         return fileEntity.get();
     }
 
     @Transactional
-    public void editFileName(String authToken, String fileName, String newFileName) {
-        if (newFileName != null && isFile(1L, fileName) && !isFile(1L, newFileName)) {
-            fileRepository.editFileNameByUserId(newFileName, fileName, 1L);
-        } else {
-            throw new InputDataException("Ошибка ввода данных. Отсутствует новое имя файла, или новое имя файла" +
-                    " совпадает с именем файла в облаке, или файл не найден.");
+    public void editFileName(String fileName, String newFileName) throws NewFileNameUnknownException,
+            FileNotFoundException, NewFileNameNotUniqueException {
+        final var userId = getUserAuth().getId();
+        if (newFileName.trim().isEmpty()) {
+            throw new NewFileNameUnknownException(String.format("FileService. Edit file. There is no new file name." +
+                    " UserId: [%d], newFileName [%s].", userId, newFileName));
         }
+        if (!isFile(userId, fileName)) {
+            throw new FileNotFoundException(String.format("FileService. Edit file. File not found. UserId: [%d]," +
+                    " fileName [%s].", userId, fileName));
+        }
+        if (isFile(userId, newFileName)) {
+            throw new NewFileNameNotUniqueException(String.format("FileService. Edit file. Is the new file name the same" +
+                    " as the file name in the cloud. UserId: [%d], newFileName [%s].", userId, newFileName));
+        }
+        fileRepository.editFileNameByUserId(newFileName, fileName, userId);
+        log.info("The user with id [{}] changed the file name [{}] to [{}].", userId, fileName, newFileName);
     }
 
-    public List<FileResponse> getAllFiles(String authToken, Integer limit) {
-        return fileRepository.findAllByUserId(1L).stream()
+    public List<FileResponse> getAllFiles(Integer limit) {
+        final var userId = getUserAuth().getId();
+        log.info("The user with id [{}] received the requested files.", userId);
+//        return fileRepository.findFilesByUserIdWithLimit(userAuth.getId(), limit).stream()
+//                .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
+//                .collect(Collectors.toList());
+        return fileRepository.findAllByUserId(userId).stream()
                 .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
                 .collect(Collectors.toList());
     }
@@ -86,8 +96,19 @@ public class FileService {
         return fileEntity.isPresent() ? true : false;
     }
 
-    private boolean isUser(Long userId) {
-        final var userEntity = userRepository.findById(userId);
-        return userEntity.isPresent() ? true : false;
+    private UserEntity getUserAuth() {
+        return userService.getUserEntityFromUser(userService.getUserAuth());
+    }
+
+    private FileEntity createFileEntity(String fileName, MultipartFile file) throws IOException {
+        final var userAuth = getUserAuth();
+        return FileEntity.builder()
+                .fileName(fileName)
+                .fileSize(file.getSize())
+                .fileType(file.getContentType())
+                .fileDateUpdate(LocalDateTime.now())
+                .fileByte(file.getBytes())
+                .user(userAuth)
+                .build();
     }
 }
