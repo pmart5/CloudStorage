@@ -1,4 +1,4 @@
-package com.pmart5a.cloudstorage.entity;
+package com.pmart5a.cloudstorage.model.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,6 +1,6 @@
 package com.pmart5a.cloudstorage.repository;
 
-import com.pmart5a.cloudstorage.entity.UserEntity;
+import com.pmart5a.cloudstorage.model.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

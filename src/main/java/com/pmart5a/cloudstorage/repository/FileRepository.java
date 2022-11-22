@@ -1,6 +1,6 @@
 package com.pmart5a.cloudstorage.repository;
 
-import com.pmart5a.cloudstorage.entity.FileEntity;
+import com.pmart5a.cloudstorage.model.entity.FileEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

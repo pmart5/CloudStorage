@@ -1,11 +1,10 @@
 package com.pmart5a.cloudstorage.controller;
 
-import com.pmart5a.cloudstorage.entity.FileEntity;
-import com.pmart5a.cloudstorage.model.FileNameRequest;
-import com.pmart5a.cloudstorage.model.FileResponse;
+import com.pmart5a.cloudstorage.model.dto.FileNameRequest;
+import com.pmart5a.cloudstorage.model.dto.FileResponse;
+import com.pmart5a.cloudstorage.model.entity.FileEntity;
 import com.pmart5a.cloudstorage.service.FileService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,52 +12,50 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 //@RequestMapping("/cloud")
 public class FileController {
 
     private final FileService fileService;
 
-    @PostMapping(value = "/file")
-    public ResponseEntity<Void> uploadFile(@RequestHeader("auth-token") String authToken,
-                                           @RequestParam("filename") String fileName,
-                                           @RequestPart("file") MultipartFile file) {
-        fileService.uploadFile(authToken, fileName, file);
+    @PostMapping("/file")
+    public ResponseEntity<Void> uploadFile(@RequestParam("filename") String fileName,
+                                           @RequestPart("file") MultipartFile file) throws IOException {
+        fileService.uploadFile(fileName, file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/file")
-    public ResponseEntity<Void> deleteFile(@RequestHeader("auth-token") String authToken,
-                                        @RequestParam("filename") String fileName) {
-        fileService.deleteFile(authToken, fileName);
+    @DeleteMapping("/file")
+    public ResponseEntity<Void> deleteFile(@RequestParam("filename") String fileName) {
+        fileService.deleteFile(fileName);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping(value = "/file", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<byte[]> downloadFile(@RequestHeader("auth-token") String authToken,
-                                               @RequestParam("filename") String fileName) {
-        FileEntity file = fileService.downloadFile(authToken, fileName);
+    public ResponseEntity<byte[]> downloadFile(@RequestParam("filename") String fileName) {
+        FileEntity file = fileService.downloadFile(fileName);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(file.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
                 .body(file.getFileByte());
     }
 
-    @PutMapping(value = "/file")
-    public ResponseEntity<Void> editFileName(@RequestHeader("auth-token") String authToken,
-                                          @RequestParam("filename") String fileName,
-                                          @RequestBody FileNameRequest fileNameRequest) {
-        fileService.editFileName(authToken, fileName, fileNameRequest.getFileName());
+    @PutMapping("/file")
+    public ResponseEntity<Void> editFileName(@RequestParam("filename") String fileName,
+                                             @RequestBody FileNameRequest fileNameRequest) {
+        fileService.editFileName(fileName, fileNameRequest.getFileName());
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping(value = "/list")
-    public List<FileResponse> getAllFiles(@RequestHeader("auth-token") String authToken,
-                                                          @RequestParam("limit") Integer limit) {
-        return fileService.getAllFiles(authToken, limit);
+    @GetMapping("/list")
+    public ResponseEntity<List<FileResponse>> getAllFiles(@RequestParam("limit") Integer limit) {
+        return new ResponseEntity<>(fileService.getAllFiles(limit), HttpStatus.OK);
+
+//        List<FileResponse> listFile = fileService.getAllFiles(limit);
+//        return ResponseEntity.ok().body(listFile);
     }
 }

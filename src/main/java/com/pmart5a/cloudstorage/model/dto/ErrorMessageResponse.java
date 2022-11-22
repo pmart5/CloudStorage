@@ -1,4 +1,4 @@
-package com.pmart5a.cloudstorage.model;
+package com.pmart5a.cloudstorage.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
