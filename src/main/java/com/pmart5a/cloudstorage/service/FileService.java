@@ -45,8 +45,8 @@ public class FileService {
             throw new FileNotFoundException(String.format("FileService. Delete file. File not found. UserId: [%d]," +
                     " fileName: [%s].", userId, fileName));
         }
-            fileRepository.deleteFileByUserIdAndFileName(userId, fileName);
-            log.info("The user with id [{}] deleted the file [{}].", userId, fileName);
+        fileRepository.deleteFileByUserIdAndFileName(userId, fileName);
+        log.info("The user with id [{}] deleted the file [{}].", userId, fileName);
     }
 
     public FileEntity downloadFile(String fileName) throws FileNotFoundException {
@@ -82,7 +82,7 @@ public class FileService {
 
     public List<FileResponse> getAllFiles(Integer limit) {
         final var userId = getUserAuth().getId();
-        log.info("The user with id [{}] received the requested files.", userId);
+        log.info("The user with the ID [{}] received a list of files in the cloud.", userId);
 //        return fileRepository.findFilesByUserIdWithLimit(userAuth.getId(), limit).stream()
 //                .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
 //                .collect(Collectors.toList());
@@ -93,7 +93,7 @@ public class FileService {
 
     private boolean isFile(Long userId, String fileName) {
         final var fileEntity = fileRepository.findByUserIdAndFileName(userId, fileName);
-        return fileEntity.isPresent() ? true : false;
+        return fileEntity.isPresent();
     }
 
     private UserEntity getUserAuth() {
