@@ -27,8 +27,7 @@ public class UserService implements UserDetailsService {
                         user.getPassword()
                 ))
                 .orElseThrow(() ->
-//                new InputDataException("Некоректные учётные данные."));
-        new UsernameNotFoundException("The user was not found in the database."));
+                        new UsernameNotFoundException("The user was not found in the database."));
     }
 
     public User getUserAuth() {
