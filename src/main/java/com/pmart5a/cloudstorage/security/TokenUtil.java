@@ -12,8 +12,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
-import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
-
 @Component
 @Slf4j
 public class TokenUtil {
@@ -39,8 +37,7 @@ public class TokenUtil {
         try {
             JWT.require(getAlgorithm()).build().verify(token);
         } catch (JWTVerificationException ex) {
-            final var errorId = getGeneratorId().getId();
-            log.error("ErrorId: [{}]. TokenUtil. Token authentication. The access token is invalid.", errorId);
+            log.info("The access token is invalid.");
             return false;
         }
         return true;
@@ -49,32 +46,4 @@ public class TokenUtil {
     private Algorithm getAlgorithm() {
         return Algorithm.HMAC512(secretKey);
     }
-
-//    public boolean checkToken(String token) {
-//        Algorithm algorithm = Algorithm.HMAC256(secretKey);
-//        JWTVerifier verifier = JWT.require(algorithm).build();
-//
-//        DecodedJWT jwt = JWT.require(algorithm)
-//                .build()
-//                .verify("a.b.c");
-//
-//        try {
-//            DecodedJWT decodedJWT = verifier.verify(token);
-//            if (!decodedJWT.getIssuer().equals("auth-service")) {
-//                log.error("Issuer is incorrect");
-//                return false;
-//            }
-//
-//            if (!decodedJWT.getAudience().contains("bookstore")) {
-//                log.error("Audience is incorrect");
-//                return false;
-//            }
-//        } catch (JWTVerificationException e) {
-//            log.error("Token is invalid: " + e.getMessage());
-//            return false;
-//        }
-//
-//        return true;
-//    }
-
 }
