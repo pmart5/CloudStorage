@@ -3,6 +3,7 @@ package com.pmart5a.cloudstorage.repository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
@@ -30,7 +31,7 @@ public class TokenRepositoryImpl implements TokenRepository {
         return tokens.size();
     }
 
-//    public void putAllTokens() {
-//        tokens.keySet().;
-//    }
+    public Set<String> putAllTokens() {
+        return tokens.keySet();
+    }
 }

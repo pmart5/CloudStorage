@@ -1,5 +1,7 @@
 package com.pmart5a.cloudstorage.repository;
 
+import java.util.Set;
+
 public interface TokenRepository {
 
     void putTokenAndUserLogin(String token, String login);
@@ -11,4 +13,6 @@ public interface TokenRepository {
     boolean isToken(String token);
 
     int getSizeTokens();
+
+    Set<String> putAllTokens();
 }
