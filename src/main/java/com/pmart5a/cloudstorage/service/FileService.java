@@ -35,7 +35,7 @@ public class FileService {
                     " exists. UserId: [%d], fileName: [%s].", userId, fileName));
         }
         fileRepository.save(createFileEntity(fileName, file));
-        log.info("The user with id [{}] uploaded the file [{}].", userId, fileName);
+        log.info("The user with the ID [{}] uploaded the file [{}].", userId, fileName);
     }
 
     @Transactional
@@ -46,7 +46,7 @@ public class FileService {
                     " fileName: [%s].", userId, fileName));
         }
         fileRepository.deleteFileByUserIdAndFileName(userId, fileName);
-        log.info("The user with id [{}] deleted the file [{}].", userId, fileName);
+        log.info("The user with the ID [{}] deleted the file [{}].", userId, fileName);
     }
 
     public FileEntity downloadFile(String fileName) throws FileNotFoundException {
@@ -56,7 +56,7 @@ public class FileService {
             throw new FileNotFoundException(String.format("FileService. Download file. File not found. UserId: [%d]," +
                     " fileName: [%s].", userId, fileName));
         }
-        log.info("The user with id [{}] downloaded the file [{}].", userId, fileName);
+        log.info("The user with the ID [{}] downloaded the file [{}].", userId, fileName);
         return fileEntity.get();
     }
 
@@ -77,7 +77,7 @@ public class FileService {
                     " as the file name in the cloud. UserId: [%d], newFileName [%s].", userId, newFileName));
         }
         fileRepository.editFileNameByUserId(newFileName, fileName, userId);
-        log.info("The user with id [{}] changed the file name [{}] to [{}].", userId, fileName, newFileName);
+        log.info("The user with the ID [{}] changed the file name [{}] to [{}].", userId, fileName, newFileName);
     }
 
     public List<FileResponse> getAllFiles(Integer limit) {

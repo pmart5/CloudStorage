@@ -29,9 +29,9 @@ public class AuthService {
                 (new UsernamePasswordAuthenticationToken(username, password));
         SecurityContextHolder.getContext().setAuthentication(authentication);
         final var userAuth = userService.getUserAuth();
-        log.info("The user with id [{}] has been granted access to the system.", userAuth.getId());
+        log.info("The user with the ID [{}] has been granted access to the system.", userAuth.getId());
         final var authToken = tokenService.generateToken(userAuth);
-        log.info("The user with id [{}] has been granted an access token.", userAuth.getId());
+        log.info("The user with the ID [{}] has been granted an access token.", userAuth.getId());
         tokenService.putTokenAndUserLoginInStorage(authToken, userAuth.getLogin());
         log.info("The access token is placed in the storage.");
         return new AuthResponse(authToken);
@@ -41,8 +41,8 @@ public class AuthService {
         final var token = authToken.substring(BEGIN_INDEX);
         final var userId = userService.getUserAuth().getId();
         SecurityContextHolder.clearContext();
-        log.info("The user with id [{}] logged out.", userId);
+        log.info("The user with the ID [{}] logged out.", userId);
         tokenService.removeTokenFromStorage(token);
-        log.info("The user access token with с id [{}] removed from storage.", userId);
+        log.info("The user access token with the ID [{}] removed from storage.", userId);
     }
 }
