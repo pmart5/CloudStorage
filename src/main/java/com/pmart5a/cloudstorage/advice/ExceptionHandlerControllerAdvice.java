@@ -7,6 +7,7 @@ import com.pmart5a.cloudstorage.exception.NewFileNameUnknownException;
 import com.pmart5a.cloudstorage.model.dto.ErrorMessageResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -61,7 +62,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({AuthenticationServiceException.class, Exception.class})
     public ErrorMessageResponse handlerError(Exception ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
