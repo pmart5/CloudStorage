@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private static final int BEGIN_INDEX = 7;
     private final AuthenticationManager authenticationManager;
 
     private final TokenService tokenService;
@@ -33,22 +34,15 @@ public class AuthService {
         log.info("The user with id [{}] has been granted an access token.", userAuth.getId());
         tokenService.putTokenAndUserLoginInStorage(authToken, userAuth.getLogin());
         log.info("The access token is placed in the storage.");
-
-        System.out.println("AuthService login: число токенов в хранилище: " + tokenService.getNumberOfRecordsInStorage());
-
         return new AuthResponse(authToken);
-
     }
 
     public void logout(String authToken) {
-        final var token = authToken.substring(7);
+        final var token = authToken.substring(BEGIN_INDEX);
         final var userId = userService.getUserAuth().getId();
         SecurityContextHolder.clearContext();
         log.info("The user with id [{}] logged out.", userId);
         tokenService.removeTokenFromStorage(token);
         log.info("The user access token with с id [{}] removed from storage.", userId);
-
-        System.out.println("AuthService logout: число токенов в хранилище: " + tokenService.getNumberOfRecordsInStorage());
-
     }
 }
