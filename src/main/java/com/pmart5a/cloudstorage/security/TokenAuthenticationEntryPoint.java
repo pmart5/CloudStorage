@@ -21,13 +21,13 @@ public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. TokenFilter. Token authentication. {}.", errorId, authException.getMessage());
         response.setContentType("application/json;charset=UTF-8");
-        String message;
         if (response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-            message = "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
+            final var message = "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
+            response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
         } else {
-            message = "Для доступа к этому ресурсу требуется полная аутентификация.";
+            final var message = "Для доступа к этому ресурсу требуется полная аутентификация.";
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
         }
-        response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
     }
 }
