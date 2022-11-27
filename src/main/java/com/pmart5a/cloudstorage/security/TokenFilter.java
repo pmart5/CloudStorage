@@ -24,6 +24,7 @@ import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
 public class TokenFilter extends OncePerRequestFilter {
 
     private static final String AUTH_TOKEN = "auth-token";
+    private static final int BEGIN_INDEX = 7;
 
     private final TokenService tokenService;
     private final UserService userService;
@@ -51,10 +52,6 @@ public class TokenFilter extends OncePerRequestFilter {
             } else {
                 tokenService.removeTokenFromStorage(authToken);
                 log.info("The access token has been removed from storage.");
-
-                System.out.println("TokenFilter Токен удалён. Число токенов в хранилище: "
-                        + tokenService.getNumberOfRecordsInStorage());
-
             }
         }
         filterChain.doFilter(request, response);
@@ -63,7 +60,7 @@ public class TokenFilter extends OncePerRequestFilter {
     private String getTokenFromRequest(HttpServletRequest request) {
         final var authToken = request.getHeader(AUTH_TOKEN);
         if (StringUtils.hasText(authToken) && authToken.startsWith("Bearer ")) {
-            return authToken.substring(7);
+            return authToken.substring(BEGIN_INDEX);
         }
         return null;
     }
