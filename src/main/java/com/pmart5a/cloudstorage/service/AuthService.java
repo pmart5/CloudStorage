@@ -17,7 +17,6 @@ public class AuthService {
 
     private static final int BEGIN_INDEX = 7;
     private final AuthenticationManager authenticationManager;
-
     private final TokenService tokenService;
     private final UserService userService;
 
@@ -40,7 +39,6 @@ public class AuthService {
     public void logout(String authToken) {
         final var token = authToken.substring(BEGIN_INDEX);
         final var userId = userService.getUserAuth().getId();
-        SecurityContextHolder.clearContext();
         log.info("The user with the ID [{}] logged out.", userId);
         tokenService.removeTokenFromStorage(token);
         log.info("The user access token with the ID [{}] removed from storage.", userId);
