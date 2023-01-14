@@ -2,7 +2,6 @@ package com.pmart5a.cloudstorage.controller;
 
 import com.pmart5a.cloudstorage.model.dto.FileNameRequest;
 import com.pmart5a.cloudstorage.model.dto.FileResponse;
-import com.pmart5a.cloudstorage.model.entity.FileEntity;
 import com.pmart5a.cloudstorage.service.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-//@RequestMapping("/cloud")
+@RequestMapping("/cloud")
 public class FileController {
 
     private final FileService fileService;
@@ -37,11 +36,12 @@ public class FileController {
 
     @GetMapping(value = "/file", produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<byte[]> downloadFile(@RequestParam("filename") String fileName) {
-        FileEntity file = fileService.downloadFile(fileName);
+        final var fileEntity = fileService.downloadFile(fileName);
         return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(file.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFileName() + "\"")
-                .body(file.getFileByte());
+                .contentType(MediaType.parseMediaType(fileEntity.getFileType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"" + fileEntity.getFileName() + "\"")
+                .body(fileEntity.getFileByte());
     }
 
     @PutMapping("/file")
