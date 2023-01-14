@@ -9,7 +9,7 @@ create table if not exists users
     );
 
 --changeset pmart5a:2
-create table files
+create table if not exists files
 (
     id bigint auto_increment primary key not null,
     file_name varchar(255) not null,
