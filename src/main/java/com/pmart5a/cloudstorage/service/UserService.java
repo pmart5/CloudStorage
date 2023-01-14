@@ -30,6 +30,18 @@ public class UserService implements UserDetailsService {
                         new UsernameNotFoundException("The user was not found in the database."));
     }
 
+    public User getUser(Long userId) {
+        return User.builder()
+                .id(userId)
+                .build();
+    }
+
+    public UserEntity getUserEntityFromUser(User user) {
+        return UserEntity.builder()
+                .id(user.getId())
+                .build();
+    }
+
     public User getUserAuth() {
         final var principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User userAuth = null;
@@ -37,13 +49,5 @@ public class UserService implements UserDetailsService {
             userAuth = (User) principal;
         }
         return userAuth;
-    }
-
-    public UserEntity getUserEntityFromUser(User user) {
-        return UserEntity.builder()
-                .id(user.getId())
-                .login(user.getLogin())
-                .password(user.getPassword())
-                .build();
     }
 }
