@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.pmart5a.cloudstorage.model.User;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.Date;
 
 @Component
 @Slf4j
+@Setter
 public class TokenUtil {
 
     @Value("${jwt.token.secret}")
@@ -23,7 +25,7 @@ public class TokenUtil {
     private long lifetime;
 
     public String generateToken(User user) {
-        final String subject = String.valueOf(user.getId());
+        final var subject = String.valueOf(user.getId());
         Instant now = Instant.now();
         Instant exp = now.plus(lifetime, ChronoUnit.MINUTES);
         return JWT.create()
@@ -41,6 +43,11 @@ public class TokenUtil {
             return false;
         }
         return true;
+    }
+
+    public Long getUserIdFromToken(String token) {
+        final var jwt = JWT.require(getAlgorithm()).build().verify(token);
+        return Long.valueOf(jwt.getSubject());
     }
 
     private Algorithm getAlgorithm() {
