@@ -18,16 +18,17 @@ public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-        final var errorId = getGeneratorId().getId();
-        log.error("ErrorId: [{}]. TokenFilter. Token authentication. {}.", errorId, authException.getMessage());
-        response.setContentType("application/json;charset=UTF-8");
-        if (response.getStatus() == HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
-            final var message = "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
-            response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
-        } else {
-            final var message = "Для доступа к этому ресурсу требуется полная аутентификация.";
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
+        if (response.getStatus() != HttpServletResponse.SC_INTERNAL_SERVER_ERROR) {
+            final var errorId = getGeneratorId().getId();
+            log.error("ErrorId: [{}]. TokenFilter. Token authentication. {}.", errorId, authException.getMessage());
+            formResponse(response, errorId);
         }
+    }
+
+    protected void formResponse(HttpServletResponse response, Integer errorId) throws IOException {
+        final var message = "Для доступа к этому ресурсу требуется полная аутентификация.";
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
     }
 }
