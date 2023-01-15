@@ -22,7 +22,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(FileNameNotUniqueException.class)
-    public ErrorMessageResponse handlerFileNameNotUnique(FileNameNotUniqueException ex) {
+    public ErrorMessageResponse handlerFileNameNotUniqueException(FileNameNotUniqueException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
         return new ErrorMessageResponse("Ошибка ввода данных. Файл с таким именем уже есть в облаке.", errorId);
@@ -38,7 +38,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NewFileNameUnknownException.class)
-    public ErrorMessageResponse handlerNewFileNameUnknown(NewFileNameUnknownException ex) {
+    public ErrorMessageResponse handlerNewFileNameUnknownException(NewFileNameUnknownException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
         return new ErrorMessageResponse("Ошибка ввода данных. Отсутствует новое имя файла.", errorId);
@@ -46,7 +46,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(NewFileNameNotUniqueException.class)
-    public ErrorMessageResponse handlerNewFileNameNotUnique(NewFileNameNotUniqueException ex) {
+    public ErrorMessageResponse handlerNewFileNameNotUniqueException(NewFileNameNotUniqueException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
         return new ErrorMessageResponse("Ошибка ввода данных. Новое имя файла совпадает с именем файла" +
@@ -55,7 +55,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(AuthenticationException.class)
-    public ErrorMessageResponse handlerAuthentication(AuthenticationException ex) {
+    public ErrorMessageResponse handlerAuthenticationException(AuthenticationException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. AuthService. Authentication. {}.", errorId, ex.getMessage());
         return new ErrorMessageResponse("Ошибка ввода данных. Неверные учётные данные.", errorId);
@@ -63,7 +63,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler({AuthenticationServiceException.class, Exception.class})
-    public ErrorMessageResponse handlerError(Exception ex) {
+    public ErrorMessageResponse handlerException(Exception ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
         return new ErrorMessageResponse("Ошибка сервера. Попробуйте повторить операцию через какое-то время.",
