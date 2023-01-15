@@ -1,0 +1,173 @@
+package com.pmart5a.cloudstorage.service;
+
+import com.pmart5a.cloudstorage.exception.FileNameNotUniqueException;
+import com.pmart5a.cloudstorage.exception.FileNotFoundException;
+import com.pmart5a.cloudstorage.exception.NewFileNameNotUniqueException;
+import com.pmart5a.cloudstorage.exception.NewFileNameUnknownException;
+import com.pmart5a.cloudstorage.model.dto.FileResponse;
+import com.pmart5a.cloudstorage.model.entity.FileEntity;
+import com.pmart5a.cloudstorage.model.entity.UserEntity;
+import com.pmart5a.cloudstorage.repository.FileRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(MockitoExtension.class)
+public class FileServiceTest {
+
+    private static final String FILE_NAME = "test.txt";
+    private static final String FILE_BODY = "Test content.";
+    private static final Long FILE_SIZE = 13L;
+    private static final String NEW_FILE_NAME = "new.txt";
+    private static final String NEW_FILE_NAME_EMPTY = " ";
+    private static final Long ID = 1L;
+    private static final Integer LIMIT = 3;
+    MultipartFile MULTIPART_FILE =
+            new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, FILE_BODY.getBytes());
+    private static final UserEntity USER_ENTITY_ONLY_ID = UserEntity.builder()
+            .id(ID)
+            .build();
+    private static final FileEntity FILE_ENTITY = FileEntity.builder()
+            .id(ID)
+            .fileName(FILE_NAME)
+            .fileSize(FILE_SIZE)
+            .build();
+
+    @Mock
+    private FileRepository fileRepository;
+    @Mock
+    private UserService userService;
+    @InjectMocks
+    private FileService fileService;
+
+    @BeforeEach
+    public void setUp() {
+        when(userService.getUserEntityFromUser(userService.getUserAuth())).thenReturn(USER_ENTITY_ONLY_ID);
+        System.out.println("The test is running: " + this);
+    }
+
+    @AfterEach
+    public void tearDown() {
+        System.out.println("The test is completed: " + this);
+    }
+
+    @Nested
+    public class methodUploadFileTest {
+
+        @Test
+        public void testUploadFileSuccess() throws IOException {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.empty());
+
+            fileService.uploadFile(FILE_NAME, MULTIPART_FILE);
+
+            verify(fileRepository, times(1)).save(any(FileEntity.class));
+        }
+
+        @Test
+        public void testUploadFileThrowsFileNameNotUniqueException() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.of(FILE_ENTITY));
+
+            assertThrows(FileNameNotUniqueException.class, () -> fileService.uploadFile(FILE_NAME, MULTIPART_FILE));
+        }
+    }
+
+    @Nested
+    public class methodDeleteFileTest {
+
+        @Test
+        public void testDeleteFileSuccess() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.of(FILE_ENTITY));
+
+            fileService.deleteFile(FILE_NAME);
+
+            verify(fileRepository, times(1)).deleteFileByUserIdAndFileName(ID, FILE_NAME);
+        }
+
+        @Test
+        public void testDeleteFileThrowsFileNotFoundException() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.empty());
+
+            assertThrows(FileNotFoundException.class, () -> fileService.deleteFile(FILE_NAME));
+        }
+    }
+
+    @Nested
+    public class methodDownloadFileTest {
+
+        @Test
+        public void testDownloadFileSuccess() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.of(FILE_ENTITY));
+
+            final var actualFileEntity = fileService.downloadFile(FILE_NAME);
+
+            assertEquals(FILE_ENTITY, actualFileEntity);
+        }
+
+        @Test
+        public void testDownloadFileThrowsFileNotFoundException() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.empty());
+
+            assertThrows(FileNotFoundException.class, () -> fileService.downloadFile(FILE_NAME));
+        }
+    }
+
+    @Nested
+    public class methodEditFileNameTest {
+
+        @Test
+        public void testEditFileNameSuccess() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.of(FILE_ENTITY));
+
+            fileService.editFileName(FILE_NAME, NEW_FILE_NAME);
+
+            verify(fileRepository, times(1))
+                    .editFileNameByUserId(NEW_FILE_NAME, FILE_NAME, USER_ENTITY_ONLY_ID.getId());
+        }
+
+        @Test
+        public void testEditFileNameThrowsNewFileNameUnknownException() {
+            assertThrows(NewFileNameUnknownException.class, () ->
+                    fileService.editFileName(FILE_NAME, NEW_FILE_NAME_EMPTY));
+        }
+
+        @Test
+        public void testEditFileNameThrowsFileNotFoundException() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.empty());
+
+            assertThrows(FileNotFoundException.class, () -> fileService.editFileName(FILE_NAME, NEW_FILE_NAME));
+        }
+
+        @Test
+        public void testEditFileNameThrowsNewFileNameNotUniqueException() {
+            when(fileRepository.findByUserIdAndFileName(ID, FILE_NAME)).thenReturn(Optional.of(FILE_ENTITY));
+
+            assertThrows(NewFileNameNotUniqueException.class, () -> fileService.editFileName(FILE_NAME, FILE_NAME));
+        }
+    }
+
+    @Test
+    public void testGetAllFilesSuccess() {
+        final var expectedFileResponse = List.of(new FileResponse(FILE_NAME, FILE_SIZE));
+        when(fileRepository.findAllByUserId(USER_ENTITY_ONLY_ID.getId())).thenReturn(List.of(FILE_ENTITY));
+
+        final var actualFileResponse = fileService.getAllFiles(LIMIT);
+
+        assertEquals(expectedFileResponse, actualFileResponse);
+    }
+}
