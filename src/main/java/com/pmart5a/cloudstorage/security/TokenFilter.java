@@ -23,7 +23,7 @@ import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
 
-    private static final String AUTH_TOKEN = "auth-token";
+    private static final String HEADER_AUTH_TOKEN = "auth-token";
     private static final int BEGIN_INDEX = 7;
 
     private final TokenService tokenService;
@@ -35,19 +35,19 @@ public class TokenFilter extends OncePerRequestFilter {
         String authToken = getTokenFromRequest(request);
         if (authToken != null && tokenService.isTokenInStorage(authToken)) {
             if (tokenService.checkToken(authToken)) {
-                final var username = tokenService.getUserLoginFromStorage(authToken);
+                final var userId = tokenService.getUserIdFromToken(authToken);
+                final var user = userService.getUser(userId);
                 try {
-                    final var userDetails = userService.loadUserByUsername(username);
                     final var usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
+                            user,
                             null,
-                            userDetails.getAuthorities()
+                            user.getAuthorities()
                     );
                     SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                 } catch (Exception ex) {
                     final var errorId = getGeneratorId().getId();
                     log.error("ErrorId: [{}]. TokenFilter. {}", errorId, ex.getMessage());
-                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    formResponse(response, errorId);
                 }
             } else {
                 tokenService.removeTokenFromStorage(authToken);
@@ -58,10 +58,17 @@ public class TokenFilter extends OncePerRequestFilter {
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
-        final var authToken = request.getHeader(AUTH_TOKEN);
-        if (StringUtils.hasText(authToken) && authToken.startsWith("Bearer ")) {
-            return authToken.substring(BEGIN_INDEX);
+        final var valueHeaderAuthToken = request.getHeader(HEADER_AUTH_TOKEN);
+        if (StringUtils.hasText(valueHeaderAuthToken) && valueHeaderAuthToken.startsWith("Bearer ")) {
+            return valueHeaderAuthToken.substring(BEGIN_INDEX);
         }
         return null;
+    }
+
+    protected void formResponse(HttpServletResponse response, Integer errorId) throws IOException {
+        final var message = "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
     }
 }
