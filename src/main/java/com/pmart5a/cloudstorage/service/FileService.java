@@ -83,12 +83,13 @@ public class FileService {
     public List<FileResponse> getAllFiles(Integer limit) {
         final var userId = getUserAuth().getId();
         log.info("The user with the ID [{}] received a list of files in the cloud.", userId);
-//        return fileRepository.findFilesByUserIdWithLimit(userAuth.getId(), limit).stream()
-//                .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
-//                .collect(Collectors.toList());
         return fileRepository.findAllByUserId(userId).stream()
                 .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
                 .collect(Collectors.toList());
+
+//        return fileRepository.findFilesByUserIdWithLimit(userAuth.getId(), limit).stream()
+//                .map(file -> new FileResponse(file.getFileName(), file.getFileSize()))
+//                .collect(Collectors.toList());
     }
 
     private boolean isFile(Long userId, String fileName) {
