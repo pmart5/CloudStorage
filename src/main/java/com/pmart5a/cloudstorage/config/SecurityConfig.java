@@ -12,7 +12,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -21,7 +20,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @EnableWebMvc
 @RequiredArgsConstructor
-//@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig implements WebMvcConfigurer {
 
     private final TokenFilter tokenFilter;
@@ -47,8 +45,8 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .cors()
                 .and()
                 .authorizeHttpRequests(urlConfig -> urlConfig
-                        .antMatchers("/login").permitAll()
-                        .antMatchers("/file").hasAuthority("ROLE_USER")
+                        .antMatchers("/cloud/login").permitAll()
+                        .antMatchers("/cloud/file").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated()
                         .and()
                         .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
@@ -56,14 +54,5 @@ public class SecurityConfig implements WebMvcConfigurer {
                 .exceptionHandling(eh -> eh.authenticationEntryPoint(new TokenAuthenticationEntryPoint()))
                 .sessionManagement(sm -> sm.sessionCreationPolicy(STATELESS))
                 .build();
-    }
-
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry
-                .addMapping("/**")
-                .allowCredentials(true)
-                .allowedOrigins("http://localhost:8080")
-                .allowedMethods("*");
     }
 }
