@@ -21,7 +21,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -30,32 +29,13 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
 public class FileIntegrationTest extends AbstractIntegrationTest {
-
-    private static final String LOGIN = "test@mail.com";
-    private static final String PASSWORD = "$2a$10$G.rPhcA1V8KRkVZ7yzVjwO0sGL1JYXR0fMp8gTLN3LkxXUKVD3Uf6";
-    private static final String URL_FILE = "/cloud/file";
-    private static final String URL_LIST = "/cloud/list";
-    private static final String FILE_NAME = "test.txt";
-    private static final String FILE_NAME_TWO = "tests.txt";
-    private static final String NEW_FILE_NAME = "new.txt";
-    private static final String NEW_FILE_NAME_EMPTY = " ";
-    private static final String FILE_BODY = "Test content.";
-    private static final Long FILE_SIZE = 13L;
-    private static final String QUERY_PARAM_FILENAME = "filename";
-    private static final String QUERY_PARAM_LIMIT = "limit";
-    private static final String LIMIT = "3";
-    private static final String BEARER = "Bearer ";
-    private static final String AUTH_TOKEN_INVALID = "authTokenInvalid";
-    private static final String AUTH_TOKEN_EMPTY = "";
-    private static final String HEADER_AUTH_TOKEN = "auth-token";
-    private static final MockMultipartFile MULTIPART_FILE =
-            new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, FILE_BODY.getBytes());
 
     private static Stream<Arguments> sourceForErrorIsBadRequest() throws JsonProcessingException {
         final var contentNewFileNameEmpty = createContent(NEW_FILE_NAME_EMPTY);
@@ -200,7 +180,7 @@ public class FileIntegrationTest extends AbstractIntegrationTest {
                 .perform(
                         get(URL_LIST)
                                 .header(HEADER_AUTH_TOKEN, BEARER + authToken)
-                                .queryParam(QUERY_PARAM_LIMIT, LIMIT)
+                                .queryParam(QUERY_PARAM_LIMIT, String.valueOf(LIMIT))
                 )
                 .andExpect(status().isOk())
                 .andExpect(content().json(objectMapper.writeValueAsString(list)));
@@ -256,7 +236,7 @@ public class FileIntegrationTest extends AbstractIntegrationTest {
     private void addTestUser() {
         final var userEntity = UserEntity.builder()
                 .login(LOGIN)
-                .password(PASSWORD)
+                .password(PASSWORD_ENCODED)
                 .build();
         userRepository.save(userEntity);
     }

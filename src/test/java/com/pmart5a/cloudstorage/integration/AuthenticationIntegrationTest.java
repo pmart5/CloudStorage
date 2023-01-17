@@ -1,6 +1,5 @@
 package com.pmart5a.cloudstorage.integration;
 
-import com.pmart5a.cloudstorage.model.User;
 import com.pmart5a.cloudstorage.model.dto.AuthRequest;
 import com.pmart5a.cloudstorage.service.TokenService;
 import org.junit.jupiter.api.AfterEach;
@@ -20,21 +19,10 @@ import org.springframework.test.context.jdbc.Sql;
 import java.net.URI;
 import java.util.stream.Stream;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthenticationIntegrationTest extends AbstractIntegrationTest {
-
-    private static final String URL_LOGIN = "/cloud/login";
-    private static final String URL_LOGOUT = "/cloud/logout";
-    private static final String LOGIN = "test@mail.com";
-    private static final String PASSWORD = "test";
-    private static final String INVALID_VALUE = "invalid value";
-    private static final String BEARER = "Bearer ";
-    private static final String HEADER_AUTH_TOKEN = "auth-token";
-    private static final Long ID = 1L;
-    private static final User USER_ONLY_ID = User.builder()
-            .id(ID)
-            .build();
 
     private static Stream<Arguments> sourceForLoginInvalid() {
         return Stream.of(Arguments.of(INVALID_VALUE, PASSWORD),

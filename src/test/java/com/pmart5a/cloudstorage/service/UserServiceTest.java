@@ -1,7 +1,5 @@
 package com.pmart5a.cloudstorage.service;
 
-import com.pmart5a.cloudstorage.model.User;
-import com.pmart5a.cloudstorage.model.entity.UserEntity;
 import com.pmart5a.cloudstorage.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,35 +16,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.Optional;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
-
-    private static final String LOGIN = "test@mail.com";
-    private static final String PASSWORD = "test";
-    private static final Long ID = 1L;
-    private static final UserEntity USER_ENTITY_ONLY_ID = UserEntity.builder()
-            .id(ID)
-            .build();
-
-    private static final UserEntity USER_ENTITY = UserEntity.builder()
-            .id(ID)
-            .login(LOGIN)
-            .password(PASSWORD)
-            .build();
-
-    private static final User USER_ONLY_ID = User.builder()
-            .id(ID)
-            .build();
-
-    private static final User USER = User.builder()
-            .id(ID)
-            .login(LOGIN)
-            .password(PASSWORD)
-            .build();
 
     @Mock
     private UserRepository userRepository;

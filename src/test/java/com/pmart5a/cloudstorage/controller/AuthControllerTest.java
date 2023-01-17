@@ -1,7 +1,5 @@
 package com.pmart5a.cloudstorage.controller;
 
-import com.pmart5a.cloudstorage.model.dto.AuthRequest;
-import com.pmart5a.cloudstorage.model.dto.AuthResponse;
 import com.pmart5a.cloudstorage.service.AuthService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,17 +10,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthControllerTest {
-
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final String LOGIN = "test@mail.com";
-    private static final String PASSWORD = "test";
-    private static final AuthRequest AUTH_REQUEST = new AuthRequest(LOGIN, PASSWORD);
-    private static final AuthResponse AUTH_RESPONSE = new AuthResponse(TOKEN_ONE);
 
     @Mock
     private AuthService authService;

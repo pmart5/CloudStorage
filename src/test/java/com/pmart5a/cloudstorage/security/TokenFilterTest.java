@@ -1,6 +1,5 @@
 package com.pmart5a.cloudstorage.security;
 
-import com.pmart5a.cloudstorage.model.User;
 import com.pmart5a.cloudstorage.service.TokenService;
 import com.pmart5a.cloudstorage.service.UserService;
 import org.junit.jupiter.api.AfterEach;
@@ -19,20 +18,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenFilterTest {
-
-    private static final String HEADER_AUTH_TOKEN = "auth-token";
-    private static final String VALUE_HEADER_AUTH_TOKEN = "Bearer tokenOne";
-    private static final String VALUE_HEADER_INVALID_ONE = "";
-    private static final String VALUE_HEADER_INVALID_TWO = "Bearer  tokenOne";
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final Long ID = 1L;
-    private static final User USER_ONLY_ID = User.builder()
-            .id(ID)
-            .build();
 
     @Mock
     private TokenService tokenService;

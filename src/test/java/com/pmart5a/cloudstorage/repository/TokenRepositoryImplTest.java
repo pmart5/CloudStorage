@@ -10,13 +10,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenRepositoryImplTest {
-
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final String TOKEN_TWO = "tokenTwo";
 
     @InjectMocks
     private TokenRepositoryImpl tokenRepository;
@@ -43,33 +41,30 @@ public class TokenRepositoryImplTest {
 
         @Test
         public void testAddTokenNewToken() {
-            final var expected = 2;
-
             tokenRepository.addToken(TOKEN_TWO);
+
             final var actual = tokenRepository.getSizeTokens();
 
-            assertEquals(expected, actual);
+            assertEquals(NUMBER_TWO, actual);
         }
 
         @Test
         public void testAddTokenWhenTokenIsExist() {
-            final var expected = 1;
-
             tokenRepository.addToken(TOKEN_ONE);
+
             final var actual = tokenRepository.getSizeTokens();
 
-            assertEquals(expected, actual);
+            assertEquals(NUMBER_ONE, actual);
         }
     }
 
     @Test
     public void testRemoveToken() {
-        final var expected = 0;
-
         tokenRepository.removeToken(TOKEN_ONE);
+
         final var actual = tokenRepository.getSizeTokens();
 
-        assertEquals(expected, actual);
+        assertEquals(NUMBER_ZERO, actual);
     }
 
     @Nested
@@ -92,11 +87,9 @@ public class TokenRepositoryImplTest {
 
     @Test
     public void testGetSizeTokens() {
-        final var expected = 1;
-
         final var actual = tokenRepository.getSizeTokens();
 
-        assertEquals(expected, actual);
+        assertEquals(NUMBER_ONE, actual);
     }
 
     @Test

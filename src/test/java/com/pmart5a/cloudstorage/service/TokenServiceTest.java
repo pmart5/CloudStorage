@@ -1,6 +1,5 @@
 package com.pmart5a.cloudstorage.service;
 
-import com.pmart5a.cloudstorage.model.User;
 import com.pmart5a.cloudstorage.repository.TokenRepositoryImpl;
 import com.pmart5a.cloudstorage.security.TokenUtil;
 import org.junit.jupiter.api.AfterEach;
@@ -13,17 +12,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenServiceTest {
-
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final String TOKEN_TWO = "tokenTwo";
-    private static final int NUMBER_OF_TOKENS = 2;
-    private static final User USER = User.builder().build();
 
     @Mock
     private TokenRepositoryImpl tokenRepository;

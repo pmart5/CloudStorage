@@ -18,21 +18,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 
 import java.util.stream.Stream;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class ExceptionHandlerControllerAdviceTest {
-
-    private static final String ERROR_MESSAGE = "Error message";
-    private static final String MESSAGE_FILE_NAME_NOT_UNIQUE =
-            "Ошибка ввода данных. Файл с таким именем уже есть в облаке.";
-    private static final String MESSAGE_FILE_NOT_FOUND = "Ошибка ввода данных. Файл с таким именем не найден.";
-    private static final String MESSAGE_NEW_FILE_NAME_UNKNOWN = "Ошибка ввода данных. Отсутствует новое имя файла.";
-    private static final String MESSAGE_NEW_FILE_NAME_NOT_UNIQUE =
-            "Ошибка ввода данных. Новое имя файла совпадает с именем файла в облаке.";
-    private static final String MESSAGE_BAD_CREDENTIALS = "Ошибка ввода данных. Неверные учётные данные.";
-    private static final String MESSAGE_SERVER_ERROR =
-            "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
 
     private static Stream<Arguments> sourceForHandlerException() {
         return Stream.of(Arguments.of(new AuthenticationServiceException(ERROR_MESSAGE)),

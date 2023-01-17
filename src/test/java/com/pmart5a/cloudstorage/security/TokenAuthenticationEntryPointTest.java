@@ -16,6 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.CONTENT_TYPE;
+import static com.pmart5a.cloudstorage.testdata.TestData.ERROR_MESSAGE;
 import static java.lang.System.out;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -23,9 +25,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 public class TokenAuthenticationEntryPointTest {
-
-    private static final String ERROR_MESSAGE = "Error message";
-    private static final String CONTENT_TYPE = "application/json;charset=UTF-8";
 
     @Mock
     HttpServletRequest request;

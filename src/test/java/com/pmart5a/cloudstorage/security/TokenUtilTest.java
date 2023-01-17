@@ -1,6 +1,5 @@
 package com.pmart5a.cloudstorage.security;
 
-import com.pmart5a.cloudstorage.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -9,18 +8,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TokenUtilTest {
-
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final Long ID = 1L;
-    private static final User USER_ONLY_ID = User.builder()
-            .id(ID)
-            .build();
-    private static final Long LIFETIME = 60L;
-    private static final String SECRET_KEY = "testSecretKey";
 
     @InjectMocks
     private TokenUtil tokenUtil;

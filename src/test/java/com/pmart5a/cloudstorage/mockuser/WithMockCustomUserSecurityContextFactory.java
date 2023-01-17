@@ -7,10 +7,10 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+import static com.pmart5a.cloudstorage.testdata.TestData.ID;
+import static com.pmart5a.cloudstorage.testdata.TestData.PASSWORD;
 
-    private static final String PASSWORD = "test";
-    private static final Long ID = 1L;
+public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
 
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser customUser) {

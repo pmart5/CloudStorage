@@ -1,6 +1,5 @@
 package com.pmart5a.cloudstorage.service;
 
-import com.pmart5a.cloudstorage.model.User;
 import com.pmart5a.cloudstorage.model.dto.AuthRequest;
 import com.pmart5a.cloudstorage.model.dto.AuthResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -13,22 +12,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class AuthServiceTest {
-
-    private static final String VALUE_HEADER_AUTH_TOKEN = "Bearer tokenOne";
-    private static final String TOKEN_ONE = "tokenOne";
-    private static final String LOGIN = "test@mail.com";
-    private static final String PASSWORD = "test";
-    private static final Long ID = 1L;
-    private static final User USER = User.builder()
-            .id(ID)
-            .login(LOGIN)
-            .password(PASSWORD)
-            .build();
 
     @Mock
     private AuthenticationManager authenticationManager;

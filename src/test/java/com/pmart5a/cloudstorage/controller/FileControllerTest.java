@@ -1,8 +1,5 @@
 package com.pmart5a.cloudstorage.controller;
 
-import com.pmart5a.cloudstorage.model.dto.FileNameRequest;
-import com.pmart5a.cloudstorage.model.dto.FileResponse;
-import com.pmart5a.cloudstorage.model.entity.FileEntity;
 import com.pmart5a.cloudstorage.service.FileService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,35 +9,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockMultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 
+import static com.pmart5a.cloudstorage.testdata.TestData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class FileControllerTest {
-
-    private static final String FILE_NAME = "test.txt";
-    private static final String NEW_FILE_NAME = "new.txt";
-    private static final String FILE_BODY = "Test content.";
-    private static final String FILE_TYPE = "text/plain";
-    private static final Long FILE_SIZE = 13L;
-    private static final Long ID = 1L;
-    private static final Integer LIMIT = 3;
-    private static final FileNameRequest FILE_NAME_REQUEST = new FileNameRequest(NEW_FILE_NAME);
-    private static final FileResponse FILE_RESPONSE = new FileResponse(FILE_NAME, FILE_SIZE);
-    private static final MockMultipartFile MULTIPART_FILE =
-            new MockMultipartFile("file", FILE_NAME, MediaType.TEXT_PLAIN_VALUE, FILE_BODY.getBytes());
-    private static final FileEntity FILE_ENTITY = FileEntity.builder()
-            .id(ID)
-            .fileName(FILE_NAME)
-            .fileSize(FILE_SIZE)
-            .fileType(FILE_TYPE)
-            .build();
 
     @Mock
     private FileService fileService;
