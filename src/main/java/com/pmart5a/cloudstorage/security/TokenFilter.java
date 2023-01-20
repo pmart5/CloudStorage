@@ -17,14 +17,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
+import static com.pmart5a.cloudstorage.utils.ApplicationData.*;
+import static com.pmart5a.cloudstorage.utils.ErrorMessages.SERVER_ERROR_MESSAGE;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
 public class TokenFilter extends OncePerRequestFilter {
-
-    private static final String HEADER_AUTH_TOKEN = "auth-token";
-    private static final int BEGIN_INDEX = 7;
 
     private final TokenService tokenService;
     private final UserService userService;
@@ -59,16 +58,15 @@ public class TokenFilter extends OncePerRequestFilter {
 
     private String getTokenFromRequest(HttpServletRequest request) {
         final var valueHeaderAuthToken = request.getHeader(HEADER_AUTH_TOKEN);
-        if (StringUtils.hasText(valueHeaderAuthToken) && valueHeaderAuthToken.startsWith("Bearer ")) {
+        if (StringUtils.hasText(valueHeaderAuthToken) && valueHeaderAuthToken.startsWith(BEARER)) {
             return valueHeaderAuthToken.substring(BEGIN_INDEX);
         }
         return null;
     }
 
     protected void formResponse(HttpServletResponse response, Integer errorId) throws IOException {
-        final var message = "Ошибка сервера. Попробуйте повторить операцию через какое-то время.";
         response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
+        response.setContentType(CUSTOM_CONTENT_TYPE);
+        response.getWriter().write(String.format(FORMAT_MESSAGE, SERVER_ERROR_MESSAGE, errorId));
     }
 }

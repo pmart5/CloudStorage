@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
+import static com.pmart5a.cloudstorage.utils.ApplicationData.CUSTOM_CONTENT_TYPE;
+import static com.pmart5a.cloudstorage.utils.ApplicationData.FORMAT_MESSAGE;
+import static com.pmart5a.cloudstorage.utils.ErrorMessages.UNAUTHORIZED_ERROR_MESSAGE;
 
 @Component
 @Slf4j
@@ -26,9 +29,8 @@ public class TokenAuthenticationEntryPoint implements AuthenticationEntryPoint {
     }
 
     protected void formResponse(HttpServletResponse response, Integer errorId) throws IOException {
-        final var message = "Для доступа к этому ресурсу требуется полная аутентификация.";
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write(String.format("{\"message\":\"%s\",\"id\":%d}", message, errorId));
+        response.setContentType(CUSTOM_CONTENT_TYPE);
+        response.getWriter().write(String.format(FORMAT_MESSAGE, UNAUTHORIZED_ERROR_MESSAGE, errorId));
     }
 }

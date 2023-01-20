@@ -9,12 +9,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import static com.pmart5a.cloudstorage.utils.ApplicationData.BEGIN_INDEX;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class AuthService {
 
-    private static final int BEGIN_INDEX = 7;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
     private final UserService userService;

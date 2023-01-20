@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import static com.pmart5a.cloudstorage.generator.GeneratorId.getGeneratorId;
+import static com.pmart5a.cloudstorage.utils.ErrorMessages.*;
 
 @RestControllerAdvice
 @Slf4j
@@ -25,7 +26,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerFileNameNotUniqueException(FileNameNotUniqueException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка ввода данных. Файл с таким именем уже есть в облаке.", errorId);
+        return new ErrorMessageResponse(FILE_NAME_NOT_UNIQUE_MESSAGE, errorId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -33,7 +34,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerFileNotFoundException(FileNotFoundException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка ввода данных. Файл с таким именем не найден.", errorId);
+        return new ErrorMessageResponse(FILE_NOT_FOUND_MESSAGE, errorId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -41,7 +42,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerNewFileNameUnknownException(NewFileNameUnknownException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка ввода данных. Отсутствует новое имя файла.", errorId);
+        return new ErrorMessageResponse(NEW_FILE_NAME_UNKNOWN_MESSAGE, errorId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -49,8 +50,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerNewFileNameNotUniqueException(NewFileNameNotUniqueException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка ввода данных. Новое имя файла совпадает с именем файла" +
-                " в облаке.", errorId);
+        return new ErrorMessageResponse(NEW_FILE_NAME_NOT_UNIQUE_MESSAGE, errorId);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -58,7 +58,7 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerAuthenticationException(AuthenticationException ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. AuthService. Authentication. {}.", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка ввода данных. Неверные учётные данные.", errorId);
+        return new ErrorMessageResponse(BAD_CREDENTIALS_MESSAGE, errorId);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -66,7 +66,6 @@ public class ExceptionHandlerControllerAdvice extends ResponseEntityExceptionHan
     public ErrorMessageResponse handlerException(Exception ex) {
         final var errorId = getGeneratorId().getId();
         log.error("ErrorId: [{}]. {}", errorId, ex.getMessage());
-        return new ErrorMessageResponse("Ошибка сервера. Попробуйте повторить операцию через какое-то время.",
-                errorId);
+        return new ErrorMessageResponse(SERVER_ERROR_MESSAGE, errorId);
     }
 }
