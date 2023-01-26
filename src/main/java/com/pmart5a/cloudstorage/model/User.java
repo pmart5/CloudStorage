@@ -17,9 +17,9 @@ import java.util.Collection;
 @Builder
 public class User implements UserDetails {
 
-    Long id;
-    String login;
-    String password;
+    private Long id;
+    private String login;
+    private String password;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -15,27 +15,27 @@ public class FileEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    String fileName;
+    private String fileName;
 
     @Column(nullable = false)
-    Long fileSize;
+    private Long fileSize;
 
     @Column(nullable = false)
-    String fileType;
+    private String fileType;
 
     @Column(nullable = false)
-    LocalDateTime fileDateUpdate;
+    private LocalDateTime fileDateUpdate;
 
     @Lob
     @Column(nullable = false)
-    byte[] fileByte;
+    private byte[] fileByte;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @JoinColumn(name = "user_id")
-    UserEntity user;
+    private UserEntity user;
 }

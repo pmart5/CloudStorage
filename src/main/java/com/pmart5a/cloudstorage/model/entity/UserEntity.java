@@ -18,14 +18,14 @@ public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
-    String login;
+    private String login;
 
     @Column(nullable = false)
-    String password;
+    private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    List<FileEntity> userFiles;
+    private List<FileEntity> userFiles;
 }

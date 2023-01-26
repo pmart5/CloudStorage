@@ -9,6 +9,6 @@ import lombok.Data;
 public class FileResponse {
 
     @JsonProperty("filename")
-    String fileName;
-    Long size;
+    private String fileName;
+    private Long size;
 }

@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 public class FileNameRequest {
 
     @JsonProperty("filename")
-    String fileName;
+    private String fileName;
 }

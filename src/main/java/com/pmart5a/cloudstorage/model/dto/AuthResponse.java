@@ -9,5 +9,5 @@ import lombok.Data;
 public class AuthResponse {
 
     @JsonProperty("auth-token")
-    String authToken;
+    private String authToken;
 }
