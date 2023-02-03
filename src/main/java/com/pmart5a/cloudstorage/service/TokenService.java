@@ -1,7 +1,7 @@
 package com.pmart5a.cloudstorage.service;
 
 import com.pmart5a.cloudstorage.model.User;
-import com.pmart5a.cloudstorage.repository.TokenRepositoryImpl;
+import com.pmart5a.cloudstorage.repository.TokenRepository;
 import com.pmart5a.cloudstorage.security.TokenUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TokenService {
 
-    private final TokenRepositoryImpl tokenRepository;
+    private final TokenRepository tokenRepository;
     private final TokenUtil tokenUtil;
 
     public void addTokenInStorage(String token) {
