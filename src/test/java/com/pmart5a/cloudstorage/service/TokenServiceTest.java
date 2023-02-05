@@ -1,7 +1,6 @@
 package com.pmart5a.cloudstorage.service;
 
 import com.pmart5a.cloudstorage.repository.TokenRepository;
-import com.pmart5a.cloudstorage.repository.TokenRepositoryImpl;
 import com.pmart5a.cloudstorage.security.TokenUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
